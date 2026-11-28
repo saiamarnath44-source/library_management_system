@@ -1,34 +1,77 @@
-public class Magazine extends Libraryitem implements Borrowable{
+
+public class Magazine extends Libraryitem implements Borrowable {
+
     private String issue;
-    private int takenday=0;
-    private Boolean isavailable=true;
-    private  String id_mem= "" ;
-    public Magazine(String title ,String id,String issue){
+    private int takenday = 0;
+    private Boolean isavailable = true;
+    private Members _member;
+    private Library _library;
+
+    public Magazine(String title, String id, String issue) {
         super(title, id);
-        this.issue=issue;
+        this.issue = issue;
     }
-    @Override 
-    public int getfine(){
+
+    @Override
+    public int getfine() {
         return 1;
     }
-    @Override 
-    public int gettotalfine(){
-        int topay=0;
-        //take the current day  and the value from the dueday form this calculate the dayslate*price =fine if condition if current day<dueday
+
+    @Override
+    public int gettotalfine() {
+        int topay = 0;
+        if (_member == null || _library == null) {
+            return topay;
+        }
+        int dueday = takenday + _member.getloanperiod();
+        int today = _library.getday();
+        if (today > dueday) {
+            topay = (today - dueday) * getfine();
+        }
         return topay;
     }
-    @Override 
-    public void getstatus(){
-        //checks the availability then prints accordingly
+
+    @Override
+    public String getstatus() {
+        if (isavailable) {
+            return "AVAILABLE";
+        }
+        return "ON_LOAN|" + _member.getid();
     }
-    public int getdueday(){
-        //ckecks the loan period form the member id related to this item 
-        return 0;
+
+    @Override
+    public String gettype() {
+        return "MAGAZINE";
     }
-    public void isborrowed(String mem_id){
-        //this method will be called from the borrw of the member object this will have to store the day it is borrowed and the id of the member and chage the availability use the ids form the object
+
+    public Boolean getavailability() {
+        return this.isavailable;
     }
-    public void isreturned(){
-        // change the availability,call  the return of the member form here ,get the fine to pay from gettotalfine then print  ,then change the day and the member to null 
-    } 
+
+    public String getmemberid() {
+        return _member.getid();
+    }
+
+    public String getdueday(Library _library) {
+        int day = this.takenday;
+        day += _member.getloanperiod();
+        return Integer.toString(day);
+    }
+
+    public void isborrowed(Members _member, Library _library) {
+        this._member = _member;
+        this._library = _library;
+        this.takenday = _library.getday();
+        this.isavailable = false;
+        _library.addborrowed(this.getid());
+    }
+
+    public void isreturned() {
+        this.isavailable = true;
+        _member.Return(this.getid());
+        System.out.println("OK fine " + this.gettotalfine());
+        _library.removeborrowed(this.getid());
+        this.takenday = 0;
+        this._member = null;
+    }
 }

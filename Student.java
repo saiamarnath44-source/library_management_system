@@ -1,14 +1,17 @@
+
 public class Student extends Members {
-    public Student(String name,String id){
-        super(name,id);
+
+    public Student(String name, String id) {
+        super(name, id);
     }
+
     @Override
-    public  int getmaxitems(){
+    public int getmaxitems() {
         return 3;
     }
-    @Override 
-    public int getloanperiod(){
+
+    @Override
+    public int getloanperiod() {
         return 14;
     }
 }
-
