@@ -18,7 +18,7 @@ public void Return(String item_id){
 }
 
 public void showloans(){
-    //traverses the list and using the itemid prints the title and duedate,dont forget to sort accordingly
+//traverses the list and using the itemid prints the title and duedate,dont forget to sort accordingly
 }
 public String getid(){
     return this.id;
